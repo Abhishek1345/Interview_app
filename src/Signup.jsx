@@ -16,13 +16,17 @@ export default function Signup() {
   const dispatch=useDispatch();
   useEffect(()=>{
    const unsubscribe=onAuthStateChanged(auth,(currentUser)=>{
+    if (!currentUser) {
+      console.log("No user logged in");
+      return; 
+    }
         dispatch(login({
           uid: currentUser.uid,
           name: currentUser.displayName,
           email: currentUser.email,
           photo: currentUser.photoURL
         }));
-        fetch('https://interview-app-7w2o.onrender.com/auth/firebase',
+        fetch(`/api/auth/firebase`,
           {
             method:"POST",
             credentials:"include",
@@ -69,7 +73,7 @@ const signInWithGoogle = async () => {
     e.preventDefault();
    
     if (validate()) {
-      fetch('https://interview-app-7w2o.onrender.com/auth/local',
+      fetch(`/api/auth/local`,
         {
         method:"POST",
         credentials:"include",

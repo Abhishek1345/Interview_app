@@ -7,7 +7,7 @@ export const useSocket=()=>{
     return socket;
 }
 export const SocketProvider=(props)=>{
-const socket = useMemo(()=>{return io("https://interview-app-7w2o.onrender.com",{
+const socket = useMemo(()=>{return io('/api/',{
     secure:true,
     withCredentials:true
 });

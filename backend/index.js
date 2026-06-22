@@ -11,7 +11,9 @@ const server=require('http').createServer(app);
 
 const io=require('socket.io')(server,{
     cors:{
-        origin:["https://interview-webapp.netlify.app","http://localhost:5173"],
+        origin:(origin,callback)=>{
+            callback(null,true);
+        },
         methods:["GET","POST"],
         credentials:true
     }
@@ -19,7 +21,9 @@ const io=require('socket.io')(server,{
 const dotenv=require('dotenv');
 dotenv.config();
 app.use(cors({
-    origin:["https://interview-webapp.netlify.app","http://localhost:5173"],
+    origin:(origin,callback)=>{
+            callback(null,true);
+        },
     credentials:true,
     methods:["GET","POST"]
 }));
@@ -78,7 +82,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use('/auth',registerRoutes);
 app.use('/login',LoginRoute)
-server.listen(process.env.PORT || 8080);
+server.listen(process.env.PORT || 5000,'0.0.0.0');
 
 
 
