@@ -7,11 +7,13 @@ export const useSocket=()=>{
     return socket;
 }
 export const SocketProvider=(props)=>{
-const socket = useMemo(()=>{return io('/api/',{
-    secure:true,
-    withCredentials:true
-});
-},[]);
+const socket = useMemo(() => {
+    return io("/", {                  
+        path: "/api/socket.io",       
+        secure: true,
+        withCredentials: true
+    });
+}, []);
 return(
     <SocketContext.Provider value={socket}>
         {props.children}
