@@ -5,7 +5,7 @@ services:
       - "80:80"
 
   backend:
-    image: abhishekjwp/interview_app-frontend:latest
+    image: abhishekjwp/interview_app-backend:latest
     ports:
       - "5000:5000"
     env_file:
