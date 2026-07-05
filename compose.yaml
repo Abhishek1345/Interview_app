@@ -1,11 +1,11 @@
 services:
   frontend:
-    build: ./
+    image: abhishekjwp/interview_app-frontend:latest
     ports:
       - "80:80"
 
   backend:
-    build: ./backend
+    image: abhishekjwp/interview_app-frontend:latest
     ports:
       - "5000:5000"
     env_file:
