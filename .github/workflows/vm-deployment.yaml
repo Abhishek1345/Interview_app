@@ -12,14 +12,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      
       - name: Build and push frontend
         uses: docker/build-push-action@v5
         with:
@@ -27,7 +25,6 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/interview_app-frontend:latest
 
-      
       - name: Build and push backend
         uses: docker/build-push-action@v5
         with:
@@ -40,10 +37,9 @@ jobs:
     needs: build-and-push
 
     steps:
-      - name: Checkout code 
+      - name: Checkout code
         uses: actions/checkout@v4
 
-     
       - name: Copy compose.yaml via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -53,7 +49,27 @@ jobs:
           source: "compose.yaml"
           target: "~/"
 
-      
+      - name: Ensure Docker is installed
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_SSH_KEY }}
+          script: |
+            if ! command -v docker &> /dev/null; then
+              sudo apt-get update
+              sudo apt-get install -y ca-certificates curl gnupg
+              sudo install -m 0755 -d /etc/apt/keyrings
+              curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+              sudo chmod a+r /etc/apt/keyrings/docker.gpg
+              echo \
+                "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+                $(. /etc/os-release && echo $VERSION_CODENAME) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+              sudo apt-get update
+              sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+              sudo usermod -aG docker $USER
+            fi
+
       - name: Deploy Stack via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -64,9 +80,7 @@ jobs:
             cat << 'EOF' > .env
             ${{ secrets.ENV_FILE_CONTENT }}
             EOF
-        
+
             docker compose pull
-            
-            
             docker compose down --remove-orphans
             docker compose up -d
