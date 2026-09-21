@@ -2,7 +2,7 @@ services:
   frontend:
     image: abhishekjwp/interview_app-frontend:latest
     ports:
-      - "80:80"
+      - "8080:80"
 
   backend:
     image: abhishekjwp/interview_app-backend:latest
